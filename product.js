@@ -1,6 +1,7 @@
 export class Product {
     constructor(data){
         this.naam = data.naam
+        this.kleur = data.kleur
         this.prijs = data.prijs
         this.foto = data.foto
     }
