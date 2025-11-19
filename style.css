@@ -12,6 +12,10 @@ header {
   justify-content:space-between;
 }
 
+.productenH2{
+  text-align: center;
+}
+
 button {
   cursor: pointer;
   border: none;
@@ -27,19 +31,24 @@ button:hover {
 }
 
 /* Productenlijst */
-.products {
+#products {
   display: flex;
-  gap: 20px;
   padding: 20px;
+  justify-content: flex-start;
 }
 
 .product {
   border: 1px solid #ddd;
-  padding: 15px;
-  border-radius: 8px;
-  width: 150px;
+  border-radius: 10px;
+  padding: 10px;
+  margin: 10px;
   text-align: center;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  width: 200px;
+}
+
+.product-foto {
+  width: 100%;
+  border-radius: 8px;
 }
 
 /* Winkelmandje */
