@@ -19,6 +19,7 @@ export class Webpagina {
 
   init() {
     this.ToonProducten()
+    this.addEvents()
   }
 
   ToonProducten() {
@@ -49,52 +50,56 @@ export class Webpagina {
 
   }
 
-  WinkelMandje() {
-    // --- Winkelmandje openen/sluiten ---
-    openBtn.addEventListener('click', () => {
-      cart.classList.add('active');
-      overlay.classList.add('active');
-    });
+  addEvents() {
+    this.productplaceholder.addEventListener('click', (e) => {
+      if (e.target.classList.contains('addBtn')) {
+        let productnaam = e.target.dataset.naam
+        let productprijs = e.target.dataset.prijs
 
-    closeBtn.addEventListener('click', closeCart);
-    overlay.addEventListener('click', closeCart);
-
-    function closeCart() {
-      cart.classList.remove('active');
-      overlay.classList.remove('active');
-    }
-    this.toeVoegproduct();
+        this.toeVoegproduct(productnaam, productprijs)
+      }
+    })
   }
 
-  toeVoegproduct() {
-    // --- Product toevoegen ---
-    for (let i = 0; i < addButtons.length; i++) {
-      let btn = addButtons[i];
-      btn.addEventListener('click', () => {
-        let naam = btn.dataset.naam;
-        let prijs = btn.dataset.prijs;
+  WinkelMandje() {
+    // --- Winkelmandje openen/sluiten ---
+    this.openBtn.addEventListener('click', () => {
+      this.cart.classList.add('active');
+      this.overlay.classList.add('active');
+    });
 
-        items.push({ naam, prijs });
-        updateCart();
-        console.log(items)
-      });
+    let closeCart = () => {
+      this.cart.classList.remove("active");
+      this.overlay.classList.remove("active");
     }
+
+    this.closeBtn.addEventListener('click', closeCart);
+    this.overlay.addEventListener('click', closeCart);
+
+
+  }
+
+  toeVoegproduct(naam, prijs) {
+    // --- Product toevoegen ---
+    this.items.push({ naam, prijs });
+
+    console.log(this.items)
     this.updateCart();
   }
 
   // --- Winkelmandje updaten ---
   updateCart() {
-    if (items.length === 0) {
+    if (this.items.length === 0) {
       cartItems.innerHTML = '';
       emptyMessage.style.display = 'block';
     } else {
       emptyMessage.style.display = 'none';
 
       let html = '';
-      for (let i = 0; i < items.length; i++) {
+      for (let i = 0; i < this.items.length; i++) {
         html += `
         <li>
-          ${items[i].name} - €${items[i].price}
+          ${this.items[i].naam} - €${this.items[i].prijs}
         </li>
       `;
       }
