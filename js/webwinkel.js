@@ -1,112 +1,69 @@
 import { FakeDatabase } from "./fakedatabase.js";
 import { Product } from "./product.js";
+import { Winkelmandje } from "./winkelmandje.js";
 
 export class Webpagina {
   constructor() {
+    this.productplaceholder = document.getElementById("products");
+    this.openBtn = document.getElementById("openCartBtn");
+    this.closeBtn = document.getElementById("closeCartBtn");
+    this.cart = document.getElementById("cart");
+    this.overlay = document.getElementById("overlay");
 
-    this.openBtn = document.getElementById('openCartBtn');
-    this.closeBtn = document.getElementById('closeCartBtn');
-    this.cart = document.getElementById('cart');
-    this.overlay = document.getElementById('overlay');
-    this.cartItems = document.getElementById('cartItems');
-    this.emptyMessage = document.getElementById('emptyMessage');
-    this.productplaceholder = document.getElementById('products');
-
-    this.addButtons = document.querySelectorAll('.addBtn');
     this.items = [];
-
+    this.winkelmandje = new Winkelmandje("cartItems");
   }
 
   init() {
-    this.ToonProducten()
-    this.addEvents()
+    this.ToonProducten();
+    this.addEvents();
+    this.initCartControls();
   }
 
   ToonProducten() {
-    // haal data op van de fake database
-    let database = new FakeDatabase();
-    database.database.forEach((item) => {
-      this.items.push(new Product(item));
-    });
+    const database = new FakeDatabase();
+    for (let i = 0; i < database.database.length; i++) {
+      this.items.push(new Product(database.database[i]));
+    }
 
-    //toon de producten
     let html = "";
-    this.items.forEach((product) => {
+    for (let i = 0; i < this.items.length; i++) {
+      const p = this.items[i];
       html += `
-      <div class="product">
-        <img src="${product.foto}" alt="${product.naam}" class="product-foto"/>
-        <p>${product.naam}</p>
-        <p>kleur: ${product.kleur}</p>
-        <p>€${product.prijs.toFixed(2)}</p>
-        <button class="addBtn" data-naam="${product.naam}" data-prijs="${product.prijs}">
-          Toevoegen
-        </button>
-      </div>
-    `;
-    });
-
+                <div class="product">
+                    <img src="${p.foto}" class="product-foto">
+                    <p>${p.naam}</p>
+                    <p>Kleur: ${p.kleur}</p>
+                    <p>€${p.prijs.toFixed(2)}</p>
+                    <button class="addBtn" data-naam="${p.naam}" data-prijs="${p.prijs}">Toevoegen</button>
+                </div>
+            `;
+    }
     this.productplaceholder.innerHTML = html;
-    this.WinkelMandje();
-
   }
 
   addEvents() {
-    this.productplaceholder.addEventListener('click', (e) => {
-      if (e.target.classList.contains('addBtn')) {
-        let productnaam = e.target.dataset.naam
-        let productprijs = e.target.dataset.prijs
-
-        this.toeVoegproduct(productnaam, productprijs)
+    this.productplaceholder.addEventListener("click", (e) => {
+      if (e.target.classList.contains("addBtn")) {
+        const naam = e.target.dataset.naam;
+        const prijs = e.target.dataset.prijs;
+        this.winkelmandje.voegToe(naam, prijs);
       }
-    })
+    });
   }
 
-  WinkelMandje() {
-    // --- Winkelmandje openen/sluiten ---
-    this.openBtn.addEventListener('click', () => {
-      this.cart.classList.add('active');
-      this.overlay.classList.add('active');
+  initCartControls() {
+    this.openBtn.addEventListener("click", () => {
+      this.cart.classList.add("active");
+      this.overlay.classList.add("active");
     });
 
-    let closeCart = () => {
+    const close = () => {
       this.cart.classList.remove("active");
       this.overlay.classList.remove("active");
-    }
+    };
 
-    this.closeBtn.addEventListener('click', closeCart);
-    this.overlay.addEventListener('click', closeCart);
-
-
+    this.closeBtn.addEventListener("click", close);
+    this.overlay.addEventListener("click", close);
   }
-
-  toeVoegproduct(naam, prijs) {
-    // --- Product toevoegen ---
-    this.items.push({ naam, prijs });
-
-    console.log(this.items)
-    this.updateCart();
-  }
-
-  // --- Winkelmandje updaten ---
-  updateCart() {
-    if (this.items.length === 0) {
-      cartItems.innerHTML = '';
-      emptyMessage.style.display = 'block';
-    } else {
-      emptyMessage.style.display = 'none';
-
-      let html = '';
-      for (let i = 0; i < this.items.length; i++) {
-        html += `
-        <li>
-          ${this.items[i].naam} - €${this.items[i].prijs}
-        </li>
-      `;
-      }
-
-      cartItems.innerHTML = html;
-    }
-  }
-
-
 }
